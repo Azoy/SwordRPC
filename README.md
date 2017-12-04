@@ -61,6 +61,8 @@ rpc.onJoinRequest { rpc, secret, request in
   print(request.avatar)
   print(request.discriminator)
   print(request.userId)
+
+  rpc.reply(to: request, with: .yes) // or .no or .ignore
 }
 ```
 
