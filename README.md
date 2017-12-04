@@ -64,6 +64,8 @@ rpc.onJoinRequest { rpc, secret, request in
 
   rpc.reply(to: request, with: .yes) // or .no or .ignore
 }
+
+rpc.connect()
 ```
 
 ## Links
