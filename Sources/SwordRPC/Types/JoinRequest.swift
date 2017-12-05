@@ -8,7 +8,7 @@
 
 public struct JoinRequest: Decodable {
   let avatar: String
-  let discriminator: Int
+  let discriminator: String
   let userId: String
   let username: String
   

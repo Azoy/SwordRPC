@@ -6,8 +6,18 @@
 1. macOS, Linux
 2. Swift 4.0
 
-## Adding SwordRPC
-Because this application needs to be used with a GUI application, it is best to install the package and it's dependencies then copy the sources to your own project.
+## Adding SwordRP
+### CocoaPods
+Edit your Podfile to add this dependency:
+
+```ruby
+platform :osx, '10.11'
+
+target 'yourappnamehere' do
+  use_frameworks!
+  pod 'SwordRPC'
+end
+```
 
 ## Example
 ```swift
