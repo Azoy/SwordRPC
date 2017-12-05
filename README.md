@@ -20,12 +20,13 @@ end
 ```
 
 ## Example
+### Callbacks
 ```swift
 import SwordRPC
 
 /// Additional arguments:
-/// handlerInterval: Int = 1000 (this decides how fast to check discord for updates, the default is 1 second (1000 ms))
-/// autoRegister: Bool = true (this automatically registers your application to discord's game scheme (discord-appid://))
+/// handlerInterval: Int = 1000 (decides how fast to check discord for updates, 1000ms = 1s)
+/// autoRegister: Bool = true (automatically registers your application to discord's url scheme (discord-appid://))
 /// steamId: String? = nil (this is for steam games on these platforms)
 let rpc = SwordRPC(appId: "123")
 
@@ -65,7 +66,7 @@ rpc.onSpectateGame { rpc, secret in
   print("Our user wants to spectate!")
 }
 
-rpc.onJoinRequest { rpc, secret, request in
+rpc.onJoinRequest { rpc, request, secret in
   print("Some user wants to play with us!")
   print(request.username)
   print(request.avatar)
@@ -76,6 +77,53 @@ rpc.onJoinRequest { rpc, secret, request in
 }
 
 rpc.connect()
+```
+
+### Delegation
+```swift
+import SwordRPC
+
+class ViewController {
+  override func viewDidLoad() {
+    let rpc = SwordRPC(appId: "123")
+    rpc.delegate = self
+    rpc.connect()
+  }
+}
+
+extension ViewController: SwordRPCDelegate {
+  func swordRPCDidConnect(
+    _ rpc: SwordRPC
+  ) {}
+
+  func swordRPCDidDisconnect(
+    _ rpc: SwordRPC,
+    code: Int?,
+    message msg: String?
+  ) {}
+
+  func swordRPCDidReceiveError(
+    _ rpc: SwordRPC,
+    code: Int,
+    message msg: String
+  ) {}
+
+  func swordRPCDidJoinGame(
+    _ rpc: SwordRPC,
+    secret: String
+  ) {}
+
+  func swordRPCDidSpectateGame(
+    _ rpc: SwordRPC,
+    secret: String
+  ) {}
+
+  func swordRPCDidReceiveJoinRequest(
+    _ rpc: SwordRPC,
+    request: JoinRequest,
+    secret: String
+  ) {}
+}
 ```
 
 ## Links

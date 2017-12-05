@@ -45,7 +45,8 @@ extension SwordRPC {
       deadline: .now() + .milliseconds(self.handlerInterval)
     ) { [unowned self] in
       guard let isConnected = self.socket?.isConnected, isConnected else {
-        self.disconnectHandler(self, nil, nil)
+        self.disconnectHandler?(self, nil, nil)
+        self.delegate?.swordRPCDidDisconnect(self, code: nil, message: nil)
         return
       }
 
@@ -129,7 +130,8 @@ extension SwordRPC {
       let code = data["code"] as! Int
       let message = data["message"] as! String
       self.socket?.close()
-      self.disconnectHandler(self, code, message)
+      self.disconnectHandler?(self, code, message)
+      self.delegate?.swordRPCDidDisconnect(self, code: code, message: message)
 
     case .ping:
       try? self.send(String(data: json, encoding: .utf8)!, .pong)
@@ -153,24 +155,32 @@ extension SwordRPC {
     case.error:
       let code = data["code"] as! Int
       let message = data["message"] as! String
-      self.errorHandler(self, code, message)
+      self.errorHandler?(self, code, message)
+      self.delegate?.swordRPCDidReceiveError(self, code: code, message: message)
 
     case .join:
-      self.joinGameHandler?(self, data["secret"] as! String)
+      let secret = data["secret"] as! String
+      self.joinGameHandler?(self, secret)
+      self.delegate?.swordRPCDidJoinGame(self, secret: secret)
 
     case .joinRequest:
       let requestData = data["user"] as! [String: Any]
       let joinRequest = try! self.decoder.decode(
         JoinRequest.self, from: self.encode(requestData)
       )
-      self.joinRequestHandler?(self, data["secret"] as! String, joinRequest)
+      let secret = data["secret"] as! String
+      self.joinRequestHandler?(self, joinRequest, secret)
+      self.delegate?.swordRPCDidReceiveJoinRequest(self, request: joinRequest, secret: secret)
 
     case .ready:
-      self.connectHandler(self)
+      self.connectHandler?(self)
+      self.delegate?.swordRPCDidConnect(self)
       self.updatePresence()
 
     case.spectate:
-      self.spectateGameHandler?(self, data["secret"] as! String)
+      let secret = data["secret"] as! String
+      self.spectateGameHandler?(self, secret)
+      self.delegate?.swordRPCDidSpectateGame(self, secret: secret)
     }
   }
 

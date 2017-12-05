@@ -26,12 +26,13 @@ public class SwordRPC {
   var presence: RichPresence? = nil
 
   // MARK: Event Handlers
-  var connectHandler:      (_ rpc: SwordRPC) -> () = {_ in}
-  var disconnectHandler:   (_ rpc: SwordRPC, _ code: Int?, _ msg: String?) -> () = {_, _, _ in}
-  var errorHandler:        (_ rpc: SwordRPC, _ code: Int, _ msg: String) -> () = {_, _, _ in}
+  public weak var delegate: SwordRPCDelegate? = nil
+  var connectHandler:      ((_ rpc: SwordRPC) -> ())? = nil
+  var disconnectHandler:   ((_ rpc: SwordRPC, _ code: Int?, _ msg: String?) -> ())? = nil
+  var errorHandler:        ((_ rpc: SwordRPC, _ code: Int, _ msg: String) -> ())? = nil
   var joinGameHandler:     ((_ rpc: SwordRPC, _ secret: String) -> ())? = nil
   var spectateGameHandler: ((_ rpc: SwordRPC, _ secret: String) -> ())? = nil
-  var joinRequestHandler:  ((_ rpc: SwordRPC, _ secret: String, _ request: JoinRequest) -> ())? = nil
+  var joinRequestHandler:  ((_ rpc: SwordRPC, _ request: JoinRequest, _ secret: String) -> ())? = nil
 
   public init(
     appId: String,
@@ -45,7 +46,10 @@ public class SwordRPC {
     self.steamId = steamId
 
     self.pid = ProcessInfo.processInfo.processIdentifier
-    self.worker = DispatchQueue(label: "me.azoy.swordrpc.\(pid)", qos: .userInitiated)
+    self.worker = DispatchQueue(
+      label: "me.azoy.swordrpc.\(pid)",
+      qos: .userInitiated
+    )
     self.encoder.dateEncodingStrategy = .secondsSince1970
 
     self.createSocket()
@@ -68,17 +72,9 @@ public class SwordRPC {
         self.handshake()
         self.receive()
 
-        if self.joinGameHandler != nil {
-          self.subscribe("ACTIVITY_JOIN")
-        }
-
-        if self.spectateGameHandler != nil {
-          self.subscribe("ACTIVITY_SPECTATE")
-        }
-
-        if self.joinRequestHandler != nil {
-          self.subscribe("ACTIVITY_JOIN_REQUEST")
-        }
+        self.subscribe("ACTIVITY_JOIN")
+        self.subscribe("ACTIVITY_SPECTATE")
+        self.subscribe("ACTIVITY_JOIN_REQUEST")
 
         return
       }
@@ -94,7 +90,9 @@ public class SwordRPC {
   public func reply(to request: JoinRequest, with reply: JoinReply) {
     let json = """
     {
-      "cmd": "\(reply == .yes ? "SEND_ACTIVITY_JOIN_INVITE" : "CLOSE_ACTIVITY_JOIN_REQUEST")",
+      "cmd": "\(
+        reply == .yes ? "SEND_ACTIVITY_JOIN_INVITE" : "CLOSE_ACTIVITY_JOIN_REQUEST"
+      )",
       "args": {
         "user_id": "\(request.userId)"
       }
