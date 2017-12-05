@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'SwordRPC'
-  s.version          = '0.1.0'
+  s.version          = '0.2.0'
   s.summary          = 'A Discord Rich Presence Library for Swift'
   s.homepage         = 'https://github.com/Azoy/SwordRPC'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
