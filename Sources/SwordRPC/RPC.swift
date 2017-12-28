@@ -145,7 +145,8 @@ extension SwordRPC {
   }
 
   func handleEvent(_ data: [String: Any]) {
-    guard let event = Event(rawValue: data["evt"] as! String) else {
+    guard let evt = data["evt"] as? String,
+          let event = Event(rawValue: evt) else {
       return
     }
 
@@ -195,15 +196,15 @@ extension SwordRPC {
       self.presence = nil
 
       let json = """
-      {
-        "cmd": "SET_ACTIVITY",
-        "args": {
-          "pid": \(self.pid),
-          "activity": \(String(data: try! self.encoder.encode(presence), encoding: .utf8)!)
-        },
-        "nonce": "\(UUID().uuidString)"
-      }
-      """
+          {
+            "cmd": "SET_ACTIVITY",
+            "args": {
+              "pid": \(self.pid),
+              "activity": \(String(data: try! self.encoder.encode(presence), encoding: .utf8)!)
+            },
+            "nonce": "\(UUID().uuidString)"
+          }
+          """
 
       try? self.send(json, .frame)
     }

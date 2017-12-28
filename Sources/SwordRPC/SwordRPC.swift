@@ -89,15 +89,15 @@ public class SwordRPC {
 
   public func reply(to request: JoinRequest, with reply: JoinReply) {
     let json = """
-    {
-      "cmd": "\(
-        reply == .yes ? "SEND_ACTIVITY_JOIN_INVITE" : "CLOSE_ACTIVITY_JOIN_REQUEST"
-      )",
-      "args": {
-        "user_id": "\(request.userId)"
-      }
-    }
-    """
+        {
+          "cmd": "\(
+            reply == .yes ? "SEND_ACTIVITY_JOIN_INVITE" : "CLOSE_ACTIVITY_JOIN_REQUEST"
+          )",
+          "args": {
+            "user_id": "\(request.userId)"
+          }
+        }
+        """
 
     try? self.send(json, .frame)
   }
