@@ -58,7 +58,7 @@ public class SwordRPC {
   }
 
   public func connect() {
-    let tmp = self.getTmpPath()
+    let tmp = NSTemporaryDirectory()
 
     guard let socket = self.socket else {
       print("[SwordRPC] Unable to connect")

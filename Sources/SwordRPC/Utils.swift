@@ -13,28 +13,6 @@
 import Foundation
 
 extension SwordRPC {
-
-  func getTmpPath() -> String {
-    let currentProcess = ProcessInfo.processInfo
-
-    if let path = currentProcess.environment["XDG_RUNTIME_DIR"] {
-      return path
-    }
-
-    if let path = currentProcess.environment["TMPDIR"] {
-      return path
-    }
-
-    if let path = currentProcess.environment["TMP"] {
-      return path
-    }
-
-    if let path = currentProcess.environment["TEMP"] {
-      return path
-    }
-
-    return "/tmp"
-  }
   
   func encode(_ value: Any) -> Data {
     do {
