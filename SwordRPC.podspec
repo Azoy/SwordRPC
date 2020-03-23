@@ -13,5 +13,5 @@ Pod::Spec.new do |s|
   }
 
   s.source_files = 'Sources/SwordRPC/*.swift', 'Sources/SwordRPC/Types/*.swift'
-  s.dependency 'BlueSocket', '~> 0.12'
+  s.dependency 'BlueSocket', '~> 1.0'
 end
