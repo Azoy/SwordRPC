@@ -11,7 +11,7 @@ let package = Package(
     )
   ],
   dependencies: [
-    .package(url: "https://github.com/IBM-Swift/BlueSocket.git", from: "0.12.78")
+    .package(url: "https://github.com/IBM-Swift/BlueSocket.git", from: "1.0.0")
   ],
   targets: [
     .target(
